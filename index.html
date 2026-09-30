@@ -1,26 +1,27 @@
-<!DOCTYPE html>
-<html>
-<head><title>Free AI Video Generator</title></head>
-<body>
-  <h2>Prompt Likho</h2>
-  <input id="prompt" placeholder="a cat dancing in rain" style="width:300px">
-  <button onclick="generate()">Generate Video</button>
-  <p id="status"></p>
-  <video id="video" controls style="width:400px; display:none;"></video>
-
+<!DOCTYPE html><html><body>
+<h2>Prompt Likho</h2>
+<input id="p" style="width:300px" placeholder="cute cat dancing in garden">
+<button onclick="gen()">Generate Video</button>
+<p id="s"></p>
+<video id="v" controls style="width:90%;max-width:400px;display:none"></video>
 <script>
-async function generate(){
-  document.getElementById('status').innerText = "Video ban raha hai, 1-2 min lagega...";
-  const res = await fetch('/api/generate', {
-    method: 'POST',
-    body: JSON.stringify({ prompt: document.getElementById('prompt').value })
-  });
-  const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  const v = document.getElementById('video');
-  v.src = url; v.style.display = 'block';
-  document.getElementById('status').innerText = "Ho gaya!";
+async function gen(){
+  const prompt=document.getElementById('p').value;
+  const s=document.getElementById('s');
+  const v=document.getElementById('v');
+  if(!prompt) return alert("Prompt likho");
+  s.innerText="Video ban raha hai, 40 sec wait...";
+  v.style.display="none";
+  const res=await fetch('/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+  if(!res.ok){
+    const err=await res.text();
+    s.innerText="ERROR: "+err;
+    return;
+  }
+  const blob=await res.blob();
+  v.src=URL.createObjectURL(blob);
+  v.style.display="block";
+  s.innerText="Ho gaya!";
 }
 </script>
-</body>
-</html>
+</body></html>
